@@ -1,7 +1,5 @@
 //SD Logger
-
 #include <SD.h>
-#include "Wire.h"
 
 //Set up variables using the SD utility library functions:
 Sd2Card card;
@@ -9,14 +7,11 @@ SdVolume volume;
 SdFile root;
 SdFile file;
 
-// Initialize Sensors
-int ldrPin = 0;
-int tmpPin = 1;
+// SD Pins
+int cardDetect = 8, chipSelect = 10, cardInit = false;
 
-// SD Link
-int cardDetect = 8;
-int chipSelect = 10;
-int cardInit = false;
+//Sensor Pins
+int ldrPin = 0, tmpPin = 1;
 
 // Initialize Log Resolution in millis
 int logDelay = 1000;
@@ -24,18 +19,13 @@ int logDelay = 1000;
 void setup()
 {
   Serial.begin(9600);
-
-  //SD IO
-  pinMode(cardDetect, INPUT);
-  pinMode(chipSelect, OUTPUT);
-  // make sure that the default chip select pin is set to
-  // output, even if you don't use it:
-  pinMode(10, OUTPUT);
+  
+  sd_card_pinMode_set();
 }
 
 void loop(){
   // See if Card is Present
-  if (!digitalRead(cardDetect)) {
+  if (sd_card_present()) {
 
     // Attempt to initialize card
     if (!card.init(SPI_HALF_SPEED, chipSelect)) {
@@ -57,7 +47,7 @@ void loop(){
     //Grab Data
     String dataString = "";
     
-    dataString += "Temp: ";
+    dataString += "Temp!: ";
     dataString += analogRead(tmpPin);
     dataString += " Light: ";
     dataString += analogRead(ldrPin);
