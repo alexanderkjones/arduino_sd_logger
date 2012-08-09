@@ -1,27 +1,7 @@
-//Unique Temp + Photo JSON SD Logger
-/*
-  The Goal of this project is create an SD logger with a unique ID
- that logs temperature and light intensity data in JSON format for
- use in web application
- */
+//SD Logger
 
-#include <EEPROM.h>
 #include <SD.h>
-#include <Time.h>
 #include "Wire.h"
-
-#define DS1307_I2C_ADDRESS 0x68  // This is the I2C address
-// Arduino version compatibility Pre-Compiler Directives
-#if defined(ARDUINO) && ARDUINO >= 100   // Arduino v1.0 and newer
-  #define I2C_WRITE Wire.write 
-  #define I2C_READ Wire.read
-#else                                   // Arduino Prior to v1.0 
-  #define I2C_WRITE Wire.send 
-  #define I2C_READ Wire.receive
-#endif
-
-//Serial Container
-String ee_serial = "";
 
 //Set up variables using the SD utility library functions:
 Sd2Card card;
@@ -44,37 +24,7 @@ int logDelay = 1000;
 void setup()
 {
   Serial.begin(9600);
-  
-  //Write Random EEPROM Serial if Not Set in Byte 0
-  if(int(EEPROM.read(0)) != 111){
-    Serial.println("Serial not set....");
-    for (int i=1; i<5; i++){
-      EEPROM.write(i, random(255));
-    }
-    EEPROM.write(0,111);
-  }else{
-    Serial.print("Serial set...");
-  }
-  
-  //Read EEPROM Serial in Bytes 1-4 (0 contains isset)
-  for (int i=1; i<5; i++){
-    int ee_val = EEPROM.read(i);
-    //Read Serial into String, format 001
-    if(ee_val < 100){
-      ee_serial += 0;
-    }
-    if(ee_val < 10){
-      ee_serial += 0;
-    }
-    ee_serial += ee_val;
-  }
-  
-  Serial.print(ee_serial);
-  Serial.println();
-  
-  //Time TEMPORARY
-  time_t myTime = millis();
-  
+
   //SD IO
   pinMode(cardDetect, INPUT);
   pinMode(chipSelect, OUTPUT);
@@ -122,11 +72,6 @@ void loop(){
     }else{
       Serial.println("File Error");
     }
-  
-   //Open or Create todays log file
-     //If Create, print header in logfile CSV
-   //Write Sensor Values
-   //Close File
   }
   else{
     cardInit = false;
