@@ -9,3 +9,16 @@ void sd_card_pinMode_set(){
 boolean sd_card_present(){
   return !digitalRead(cardDetect);
 }
+
+boolean try_initialize_card(){
+    if (!card.init(SPI_HALF_SPEED, chipSelect)) {
+      Serial.println("ERRROR : Card Failed to Initialize.");
+      return false;
+      //Visual Error Message
+    } 
+    else if (!cardInit) {
+      Serial.println("Card Initialized.");
+      cardInit = true;
+    }
+}
+

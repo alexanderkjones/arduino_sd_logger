@@ -28,15 +28,7 @@ void loop(){
   if (sd_card_present()) {
 
     // Attempt to initialize card
-    if (!card.init(SPI_HALF_SPEED, chipSelect)) {
-      Serial.println("ERRROR : Card Failed to Initialize.");
-      while(1){
-      }
-    } 
-    else if (!cardInit) {
-      Serial.println("Card Initialized.");
-      cardInit = true;
-    }
+     try_initialize_card()
     
     // initialize a FAT volume
   if (!volume.init(card)) Serial.println("volume.init");
